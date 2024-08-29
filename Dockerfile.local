@@ -1,0 +1,9 @@
+FROM python:latest
+
+COPY ./.env /app/
+COPY ./requirements.txt /app/
+WORKDIR /app
+RUN : \
+    && pip install --no-cache-dir \
+                   -r ./requirements.txt \
+    && :

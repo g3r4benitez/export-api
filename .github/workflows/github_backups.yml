@@ -1,0 +1,31 @@
+name: GitHub Backup 
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  invoke_lambda:
+    name: Invoke GitHub Backup's Lambda Function
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_GH_BACKUPS }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_GH_BACKUPS }}
+        aws-region: ${{ secrets.AWS_REGION_GH_BACKUPS }}
+
+    - name: Invoke Lambda Function
+      run: |
+        aws lambda invoke \
+          --function-name github-backups \
+          --invocation-type Event \
+          --payload '{"GITHUB_REPO": "forward-export-api"}' \
+          --cli-binary-format raw-in-base64-out \
+          response.json

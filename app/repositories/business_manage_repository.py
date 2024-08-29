@@ -1,0 +1,23 @@
+from celery.utils.log import get_task_logger
+
+from app.core.config import get_connection
+from app.models.queries import Queries
+
+celery_log = get_task_logger(__name__)
+
+
+def gets(cd_resource: int, cd_instance: int):
+    """Return income based on cd_resource and cd_instance"""
+
+    celery_log.info(f"Running Business Manage tab for cd_resource={cd_resource} and cd_instance={cd_instance}")
+
+    conn = get_connection()
+
+    query = Queries().get_business_manage(cd_resource, cd_instance)
+
+    with conn:
+        with conn.cursor() as cursor:
+            cursor.execute(query)
+            headers = [desc[0] for desc in cursor.description]
+            rows = cursor.fetchall()
+            return headers, rows

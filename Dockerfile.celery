@@ -1,0 +1,16 @@
+FROM python:latest
+RUN : \
+    && apt update \
+    && DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
+        nginx \
+    && apt clean \
+    && rm -fr /var/lib/apt/lists/*
+
+COPY ./.env /app/
+COPY ./requirements.txt /app/
+WORKDIR /app
+RUN : \
+    && pip install --no-cache-dir \
+                   -r ./requirements.txt \
+    && :
+
